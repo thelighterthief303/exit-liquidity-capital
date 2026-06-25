@@ -1,16 +1,11 @@
-const positions = [
-  { asset: "Bitcoin", symbol: "BTC", allocation: "47%", value: "£59,917.14", change: "+4.2%" },
-  { asset: "Ethereum", symbol: "ETH", allocation: "28%", value: "£35,695.32", change: "+1.8%" },
-  { asset: "Solana", symbol: "SOL", allocation: "15%", value: "£19,122.49", change: "-2.1%" },
-  { asset: "Cash", symbol: "GBP", allocation: "10%", value: "£12,748.33", change: "—" },
-];
+import { positions } from "../data/fund";
 
 export default function PortfolioTable() {
   return (
-    <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+    <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-xl font-semibold">Current Positions</h3>
-        <p className="text-sm text-slate-400">Diversification, allegedly.</p>
+        <p className="text-sm text-slate-500">Diversification, allegedly.</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -31,17 +26,29 @@ export default function PortfolioTable() {
                   <p className="font-medium">{position.asset}</p>
                   <p className="text-xs text-slate-500">{position.symbol}</p>
                 </td>
-                <td className="py-4">{position.allocation}</td>
-                <td className="py-4">{position.value}</td>
+
+                <td className="py-4">{position.allocation}%</td>
+
+                <td className="py-4">
+                  £{position.value.toLocaleString("en-GB", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+
                 <td className="py-4">
                   <span
                     className={
-                      position.change.startsWith("-")
+                      position.change < 0
                         ? "text-red-400"
-                        : "text-emerald-400"
+                        : position.change > 0
+                        ? "text-emerald-400"
+                        : "text-slate-500"
                     }
                   >
-                    {position.change}
+                    {position.change === 0
+                      ? "—"
+                      : `${position.change > 0 ? "+" : ""}${position.change}%`}
                   </span>
                 </td>
               </tr>
