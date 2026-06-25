@@ -10,11 +10,64 @@ export const fund = {
 };
 
 export const positions = [
-  { asset: "Bitcoin", symbol: "BTC", allocation: 47, value: 59917.14, change: 4.2 },
-  { asset: "Ethereum", symbol: "ETH", allocation: 28, value: 35695.32, change: 1.8 },
-  { asset: "Solana", symbol: "SOL", allocation: 15, value: 19122.49, change: -2.1 },
-  { asset: "Cash", symbol: "GBP", allocation: 10, value: 12748.33, change: 0 },
+  {
+    asset: "Bitcoin",
+    symbol: "BTC",
+    quantity: 0.82,
+    averageBuyPrice: 62000,
+    currentPrice: 73069.68,
+    change: 4.2,
+  },
+  {
+    asset: "Ethereum",
+    symbol: "ETH",
+    quantity: 12.4,
+    averageBuyPrice: 2500,
+    currentPrice: 2878.65,
+    change: 1.8,
+  },
+  {
+    asset: "Solana",
+    symbol: "SOL",
+    quantity: 215,
+    averageBuyPrice: 98,
+    currentPrice: 88.94,
+    change: -2.1,
+  },
+  {
+    asset: "Cash",
+    symbol: "GBP",
+    quantity: 12748.33,
+    averageBuyPrice: 1,
+    currentPrice: 1,
+    change: 0,
+  },
 ];
+
+export const calculatedPositions = positions.map((position) => {
+  const value = position.quantity * position.currentPrice;
+  const costBasis = position.quantity * position.averageBuyPrice;
+  const profitLoss = value - costBasis;
+  const profitLossPercent = (profitLoss / costBasis) * 100;
+
+  return {
+    ...position,
+    value,
+    costBasis,
+    profitLoss,
+    profitLossPercent,
+  };
+});
+
+export const totalPortfolioValue = calculatedPositions.reduce(
+  (total, position) => total + position.value,
+  0
+);
+
+export const portfolioWithAllocations = calculatedPositions.map((position) => ({
+  ...position,
+  allocation: (position.value / totalPortfolioValue) * 100,
+}));
 
 export const navHistory = [
   { label: "Jan", value: 82000 },
@@ -24,6 +77,7 @@ export const navHistory = [
   { label: "May", value: 118000 },
   { label: "Jun", value: 127483 },
 ];
+
 export const trades = [
   {
     date: "2026-06-24",
