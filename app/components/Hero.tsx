@@ -1,3 +1,6 @@
+import AnimatedValue from "./AnimatedValue";
+import StatusCard from "./StatusCard";
+
 export default function Hero() {
   return (
     <section className="mx-auto grid max-w-6xl gap-6 py-16 md:grid-cols-[1.2fr_0.8fr]">
@@ -7,7 +10,7 @@ export default function Hero() {
         </p>
 
         <h2 className="text-5xl font-bold tracking-tight md:text-7xl">
-          £127,483.28
+          <AnimatedValue value={127483.28} />
         </h2>
 
         <p className="mt-4 text-lg text-slate-300">
@@ -31,15 +34,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8">
-        <h3 className="text-xl font-semibold">Market Notes</h3>
-
-        <div className="mt-6 space-y-5 text-slate-300">
-          <p>Investing with cautious optimism since 2026.</p>
-          <p>Risk level: higher than we&apos;d admit to our accountant.</p>
-          <p>Last updated: 2 minutes ago. Probably.</p>
-        </div>
-      </div>
+      <StatusCard />
     </section>
   );
 }

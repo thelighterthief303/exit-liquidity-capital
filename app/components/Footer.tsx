@@ -13,7 +13,7 @@ export default function Footer() {
     <footer className="mx-auto mt-16 max-w-6xl border-t border-white/10 pt-6 text-sm text-slate-400">
       <p>{quote}</p>
       <p className="mt-4">
-        Not financial advice. Definitely not tax advice. Tea helps.
+        Not financial advice. Definitely not tax advice. Gin helps.
       </p>
     </footer>
   );
