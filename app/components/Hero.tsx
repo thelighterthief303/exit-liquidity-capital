@@ -1,6 +1,17 @@
-import { fund } from "../data/fund";
+import {
+  fund,
+  portfolioWithAllocations,
+} from "../data/fund";
 import AnimatedValue from "./AnimatedValue";
 import StatusCard from "./StatusCard";
+
+const bestPerformer = portfolioWithAllocations.reduce((best, position) =>
+  position.change > best.change ? position : best
+);
+
+const worstPerformer = portfolioWithAllocations.reduce((worst, position) =>
+  position.change < worst.change ? position : worst
+);
 
 export default function Hero() {
   return (
@@ -21,7 +32,7 @@ export default function Hero() {
 
       <div className="grid gap-5 lg:grid-cols-4">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          <p className="text-sm text-slate-500">Today&apos;s Damage</p>
+          <p className="text-sm text-slate-500">Today's Damage</p>
           <p className="mt-3 text-3xl font-bold text-emerald-400">
             +£{fund.dailyChange.toLocaleString("en-GB")}
           </p>
@@ -29,12 +40,12 @@ export default function Hero() {
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Best Performer</p>
-          <p className="mt-3 text-3xl font-bold">{fund.bestPerformer}</p>
+          <p className="mt-3 text-3xl font-bold">{bestPerformer.asset}</p>
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Worst Performer</p>
-          <p className="mt-3 text-3xl font-bold">{fund.worstPerformer}</p>
+          <p className="mt-3 text-3xl font-bold">{worstPerformer.asset}</p>
         </div>
 
         <StatusCard />
