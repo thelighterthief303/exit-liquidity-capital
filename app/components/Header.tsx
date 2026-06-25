@@ -5,25 +5,23 @@ import { useEffect, useState } from "react";
 
 export default function Header() {
   const [text, setText] = useState("Dodgy");
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     timers.push(
       setTimeout(() => {
-        setText("");
+        setVisible(false);
       }, 250)
     );
 
-    const word = "Digital";
-
-    word.split("").forEach((_, index) => {
-      timers.push(
-        setTimeout(() => {
-          setText(word.substring(0, index + 1));
-        }, 280 + index * 45)
-      );
-    });
+    timers.push(
+      setTimeout(() => {
+        setText("Digital");
+        setVisible(true);
+      }, 420)
+    );
 
     return () => {
       timers.forEach(clearTimeout);
@@ -43,7 +41,14 @@ export default function Header() {
           </p>
 
           <h1 className="mt-1 text-xl font-semibold text-white">
-            <span>{text}</span> Asset Investment Fund
+            <span
+              className={`transition-opacity duration-200 ${
+                visible ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {text}
+            </span>{" "}
+            Asset Investment Fund
           </h1>
         </div>
       </Link>
