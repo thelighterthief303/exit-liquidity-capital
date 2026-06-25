@@ -10,12 +10,14 @@ export default function Header() {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
 
+    // Start fading earlier
     timers.push(
       setTimeout(() => {
         setVisible(false);
-      }, 250)
+      }, 150)
     );
 
+    // Switch to "Digital" at the same overall point
     timers.push(
       setTimeout(() => {
         setText("Digital");
@@ -42,7 +44,7 @@ export default function Header() {
 
           <h1 className="mt-1 text-xl font-semibold text-white">
             <span
-              className={`transition-opacity duration-200 ${
+              className={`transition-opacity duration-300 ${
                 visible ? "opacity-100" : "opacity-0"
               }`}
             >
