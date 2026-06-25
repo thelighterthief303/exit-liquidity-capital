@@ -24,3 +24,29 @@ export const navHistory = [
   { label: "May", value: 118000 },
   { label: "Jun", value: 127483 },
 ];
+export const trades = [
+  {
+    date: "2026-06-24",
+    asset: "Bitcoin",
+    symbol: "BTC",
+    action: "Conviction Increased",
+    quantity: "0.12",
+    value: "£7,842.20",
+  },
+  {
+    date: "2026-06-21",
+    asset: "Solana",
+    symbol: "SOL",
+    action: "Conviction Reassessed",
+    quantity: "25",
+    value: "£3,114.80",
+  },
+  {
+    date: "2026-06-18",
+    asset: "Ethereum",
+    symbol: "ETH",
+    action: "Conviction Increased",
+    quantity: "1.5",
+    value: "£4,642.00",
+  },
+];

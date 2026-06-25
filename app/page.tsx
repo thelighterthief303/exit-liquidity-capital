@@ -1,3 +1,4 @@
+import RecentTrades from "./components/RecentTrades";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import NavChart from "./components/NavChart";
@@ -13,6 +14,7 @@ export default function Home() {
       <NavChart />
       <AllocationBars />
       <PortfolioTable />
+      <RecentTrades />
       <Footer />
     </main>
   );
