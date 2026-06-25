@@ -1,11 +1,4 @@
-const navHistory = [
-  { label: "Jan", value: 82000 },
-  { label: "Feb", value: 91000 },
-  { label: "Mar", value: 87500 },
-  { label: "Apr", value: 104000 },
-  { label: "May", value: 118000 },
-  { label: "Jun", value: 127483 },
-];
+import { navHistory } from "../data/fund";
 
 const maxValue = Math.max(...navHistory.map((item) => item.value));
 

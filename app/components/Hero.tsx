@@ -1,3 +1,4 @@
+import { fund } from "../data/fund";
 import AnimatedValue from "./AnimatedValue";
 import StatusCard from "./StatusCard";
 
@@ -10,7 +11,7 @@ export default function Hero() {
         </p>
 
         <h2 className="mt-3 text-6xl font-bold tracking-tight">
-          <AnimatedValue value={127483.28} />
+          <AnimatedValue value={fund.nav} />
         </h2>
 
         <p className="mt-4 text-xl text-slate-400">
@@ -20,18 +21,20 @@ export default function Hero() {
 
       <div className="grid gap-5 lg:grid-cols-4">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          <p className="text-sm text-slate-500">Today's Damage</p>
-          <p className="mt-3 text-3xl font-bold text-emerald-400">+£2,364</p>
+          <p className="text-sm text-slate-500">Today&apos;s Damage</p>
+          <p className="mt-3 text-3xl font-bold text-emerald-400">
+            +£{fund.dailyChange.toLocaleString("en-GB")}
+          </p>
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Best Performer</p>
-          <p className="mt-3 text-3xl font-bold">Bitcoin</p>
+          <p className="mt-3 text-3xl font-bold">{fund.bestPerformer}</p>
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Worst Performer</p>
-          <p className="mt-3 text-3xl font-bold">Solana</p>
+          <p className="mt-3 text-3xl font-bold">{fund.worstPerformer}</p>
         </div>
 
         <StatusCard />

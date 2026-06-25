@@ -1,9 +1,4 @@
-const allocations = [
-  { asset: "Bitcoin", symbol: "BTC", allocation: 47 },
-  { asset: "Ethereum", symbol: "ETH", allocation: 28 },
-  { asset: "Solana", symbol: "SOL", allocation: 15 },
-  { asset: "Cash", symbol: "GBP", allocation: 10 },
-];
+import { positions } from "../data/fund";
 
 export default function AllocationBars() {
   return (
@@ -14,7 +9,7 @@ export default function AllocationBars() {
       </div>
 
       <div className="space-y-5">
-        {allocations.map((item) => (
+        {positions.map((item) => (
           <div key={item.symbol}>
             <div className="mb-2 flex justify-between text-sm">
               <span>
