@@ -22,11 +22,11 @@ export default function Header() {
         </div>
 
         <div>
-          <p className="text-sm uppercase tracking-[0.35em] text-slate-400">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
             Exit Liquidity Capital
-          </p>
+          </h1>
 
-          <h1 className="mt-1 text-xl font-semibold text-white flex items-center">
+          <p className="mt-1 text-sm text-slate-400">
             <span className="relative inline-block w-[58px]">
               <span
                 className={`absolute left-0 top-0 transition-opacity duration-400 ${
@@ -44,12 +44,11 @@ export default function Header() {
                 Digital
               </span>
 
-              {/* Invisible text to reserve width */}
               <span className="opacity-0">Digital</span>
             </span>
 
             <span className="ml-1">Asset Investment Fund</span>
-          </h1>
+          </p>
         </div>
       </Link>
 
