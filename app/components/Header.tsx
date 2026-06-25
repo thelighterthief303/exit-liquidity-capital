@@ -21,7 +21,7 @@ export default function Header() {
       timers.push(
         setTimeout(() => {
           setText(word.substring(0, index + 1));
-        }, 320 + index * 60)
+        }, 280 + index * 45)
       );
     });
 
@@ -43,10 +43,7 @@ export default function Header() {
           </p>
 
           <h1 className="mt-1 text-xl font-semibold text-white">
-            <span className="inline-block min-w-[70px] font-semibold text-emerald-300">
-              {text}
-            </span>{" "}
-            Asset Investment Fund
+            <span>{text}</span> Asset Investment Fund
           </h1>
         </div>
       </Link>
