@@ -4,30 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Header() {
-  const [text, setText] = useState("Dodgy");
-  const [visible, setVisible] = useState(true);
+  const [showDigital, setShowDigital] = useState(false);
 
   useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    const timer = setTimeout(() => {
+      setShowDigital(true);
+    }, 250);
 
-    // Start fading earlier
-    timers.push(
-      setTimeout(() => {
-        setVisible(false);
-      }, 150)
-    );
-
-    // Switch to "Digital" at the same overall point
-    timers.push(
-      setTimeout(() => {
-        setText("Digital");
-        setVisible(true);
-      }, 420)
-    );
-
-    return () => {
-      timers.forEach(clearTimeout);
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -42,15 +26,29 @@ export default function Header() {
             Exit Liquidity Capital
           </p>
 
-          <h1 className="mt-1 text-xl font-semibold text-white">
-            <span
-              className={`transition-opacity duration-300 ${
-                visible ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              {text}
-            </span>{" "}
-            Asset Investment Fund
+          <h1 className="mt-1 text-xl font-semibold text-white flex items-center">
+            <span className="relative inline-block w-[58px]">
+              <span
+                className={`absolute left-0 top-0 transition-opacity duration-400 ${
+                  showDigital ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                Dodgy
+              </span>
+
+              <span
+                className={`absolute left-0 top-0 transition-opacity duration-400 ${
+                  showDigital ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                Digital
+              </span>
+
+              {/* Invisible text to reserve width */}
+              <span className="opacity-0">Digital</span>
+            </span>
+
+            <span className="ml-1">Asset Investment Fund</span>
           </h1>
         </div>
       </Link>
