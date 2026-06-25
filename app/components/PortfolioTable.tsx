@@ -1,11 +1,11 @@
-import { positions } from "../data/fund";
+import { portfolioWithAllocations } from "../data/fund";
 
 export default function PortfolioTable() {
   return (
     <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-xl font-semibold">Current Positions</h3>
-        <p className="text-sm text-slate-500">Diversification, allegedly.</p>
+        <p className="text-sm text-slate-500">Now with actual maths.</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -13,21 +13,32 @@ export default function PortfolioTable() {
           <thead className="border-b border-white/10 text-slate-400">
             <tr>
               <th className="py-3">Asset</th>
-              <th className="py-3">Allocation</th>
+              <th className="py-3">Quantity</th>
+              <th className="py-3">Avg Buy</th>
+              <th className="py-3">Price</th>
               <th className="py-3">Value</th>
-              <th className="py-3">Today</th>
+              <th className="py-3">Allocation</th>
+              <th className="py-3">P/L</th>
             </tr>
           </thead>
 
           <tbody>
-            {positions.map((position) => (
+            {portfolioWithAllocations.map((position) => (
               <tr key={position.symbol} className="border-b border-white/5">
                 <td className="py-4">
                   <p className="font-medium">{position.asset}</p>
                   <p className="text-xs text-slate-500">{position.symbol}</p>
                 </td>
 
-                <td className="py-4">{position.allocation}%</td>
+                <td className="py-4">{position.quantity}</td>
+
+                <td className="py-4">
+                  £{position.averageBuyPrice.toLocaleString("en-GB")}
+                </td>
+
+                <td className="py-4">
+                  £{position.currentPrice.toLocaleString("en-GB")}
+                </td>
 
                 <td className="py-4">
                   £{position.value.toLocaleString("en-GB", {
@@ -36,19 +47,21 @@ export default function PortfolioTable() {
                   })}
                 </td>
 
+                <td className="py-4">{position.allocation.toFixed(1)}%</td>
+
                 <td className="py-4">
                   <span
                     className={
-                      position.change < 0
+                      position.profitLoss < 0
                         ? "text-red-400"
-                        : position.change > 0
-                        ? "text-emerald-400"
-                        : "text-slate-500"
+                        : "text-emerald-400"
                     }
                   >
-                    {position.change === 0
-                      ? "—"
-                      : `${position.change > 0 ? "+" : ""}${position.change}%`}
+                    £{position.profitLoss.toLocaleString("en-GB", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    ({position.profitLossPercent.toFixed(1)}%)
                   </span>
                 </td>
               </tr>

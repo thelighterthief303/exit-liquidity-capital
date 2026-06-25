@@ -1,16 +1,6 @@
-export const fund = {
-  name: "Exit Liquidity Capital",
-  subtitle: "Digital Asset Investment Fund",
-  nav: 127483.28,
-  dailyChange: 2364,
-  dailyChangePercent: 2.63,
-  marketMood: "Reasonably Bullish",
-  bestPerformer: "Bitcoin",
-  worstPerformer: "Solana",
-};
-
 export const positions = [
   {
+    id: 1,
     asset: "Bitcoin",
     symbol: "BTC",
     quantity: 0.82,
@@ -19,6 +9,7 @@ export const positions = [
     change: 4.2,
   },
   {
+    id: 2,
     asset: "Ethereum",
     symbol: "ETH",
     quantity: 12.4,
@@ -27,6 +18,7 @@ export const positions = [
     change: 1.8,
   },
   {
+    id: 3,
     asset: "Solana",
     symbol: "SOL",
     quantity: 215,
@@ -35,6 +27,7 @@ export const positions = [
     change: -2.1,
   },
   {
+    id: 4,
     asset: "Cash",
     symbol: "GBP",
     quantity: 12748.33,
@@ -48,14 +41,14 @@ export const calculatedPositions = positions.map((position) => {
   const value = position.quantity * position.currentPrice;
   const costBasis = position.quantity * position.averageBuyPrice;
   const profitLoss = value - costBasis;
-  const profitLossPercent = (profitLoss / costBasis) * 100;
 
   return {
     ...position,
     value,
     costBasis,
     profitLoss,
-    profitLossPercent,
+    profitLossPercent:
+      costBasis === 0 ? 0 : (profitLoss / costBasis) * 100,
   };
 });
 
@@ -66,8 +59,20 @@ export const totalPortfolioValue = calculatedPositions.reduce(
 
 export const portfolioWithAllocations = calculatedPositions.map((position) => ({
   ...position,
-  allocation: (position.value / totalPortfolioValue) * 100,
+  allocation:
+    totalPortfolioValue === 0
+      ? 0
+      : (position.value / totalPortfolioValue) * 100,
 }));
+
+export const fund = {
+  name: "Exit Liquidity Capital",
+  subtitle: "Digital Asset Investment Fund",
+  nav: totalPortfolioValue,
+  dailyChange: 2364,
+  dailyChangePercent: 2.63,
+  marketMood: "Reasonably Bullish",
+};
 
 export const navHistory = [
   { label: "Jan", value: 82000 },
@@ -75,32 +80,41 @@ export const navHistory = [
   { label: "Mar", value: 87500 },
   { label: "Apr", value: 104000 },
   { label: "May", value: 118000 },
-  { label: "Jun", value: 127483 },
+  { label: "Jun", value: totalPortfolioValue },
 ];
 
 export const trades = [
   {
+    id: 1,
     date: "2026-06-24",
+    type: "BUY",
     asset: "Bitcoin",
     symbol: "BTC",
-    action: "Conviction Increased",
-    quantity: "0.12",
-    value: "£7,842.20",
+    quantity: 0.12,
+    price: 65351.67,
+    value: 7842.20,
+    notes: "Increased conviction following ETF inflows.",
   },
   {
+    id: 2,
     date: "2026-06-21",
+    type: "SELL",
     asset: "Solana",
     symbol: "SOL",
-    action: "Conviction Reassessed",
-    quantity: "25",
-    value: "£3,114.80",
+    quantity: 25,
+    price: 124.59,
+    value: 3114.80,
+    notes: "Reduced position after recent rally.",
   },
   {
+    id: 3,
     date: "2026-06-18",
+    type: "BUY",
     asset: "Ethereum",
     symbol: "ETH",
-    action: "Conviction Increased",
-    quantity: "1.5",
-    value: "£4,642.00",
+    quantity: 1.5,
+    price: 3094.67,
+    value: 4642.00,
+    notes: "Added to core position.",
   },
 ];
