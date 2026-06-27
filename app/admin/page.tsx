@@ -1,8 +1,30 @@
+"use client";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { positions } from "../data/fund";
+import { positions as startingPositions } from "../data/fund";
+import { useState } from "react";
 
 export default function AdminPage() {
+  const [positions, setPositions] = useState(startingPositions);
+
+  function updatePosition(
+    id: number,
+    field: "quantity" | "averageBuyPrice" | "currentPrice" | "dailyChangePercent",
+    value: string
+  ) {
+    setPositions((currentPositions) =>
+      currentPositions.map((position) =>
+        position.id === id
+          ? {
+              ...position,
+              [field]: Number(value),
+            }
+          : position
+      )
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#050816] px-6 py-8 text-white">
       <Header />
@@ -15,45 +37,101 @@ export default function AdminPage() {
         <h2 className="mt-3 text-5xl font-bold">Portfolio Management</h2>
 
         <p className="mt-4 max-w-2xl text-slate-400">
-          Manual portfolio edits. No cleverness yet. Probably for the best.
+          Manual portfolio edits. Changes update on this page only for now.
         </p>
       </section>
 
       <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="mb-6 text-xl font-semibold">Current Manual Positions</h3>
+        <h3 className="mb-6 text-xl font-semibold">Edit Manual Positions</h3>
 
         <div className="space-y-4">
-          {positions.map((position) => (
-            <div
-              key={position.id}
-              className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-5"
-            >
-              <div>
-                <p className="text-sm text-slate-500">Asset</p>
-                <p>{position.asset}</p>
-              </div>
+          {positions.map((position) => {
+            const value = position.quantity * position.currentPrice;
 
-              <div>
-                <p className="text-sm text-slate-500">Symbol</p>
-                <p>{position.symbol}</p>
-              </div>
+            return (
+              <div
+                key={position.id}
+                className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-6"
+              >
+                <div>
+                  <p className="text-sm text-slate-500">Asset</p>
+                  <p>{position.asset}</p>
+                  <p className="text-xs text-slate-500">{position.symbol}</p>
+                </div>
 
-              <div>
-                <p className="text-sm text-slate-500">Quantity</p>
-                <p>{position.quantity}</p>
-              </div>
+                <label>
+                  <p className="text-sm text-slate-500">Quantity</p>
+                  <input
+                    type="number"
+                    value={position.quantity}
+                    onChange={(event) =>
+                      updatePosition(position.id, "quantity", event.target.value)
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                  />
+                </label>
 
-              <div>
-                <p className="text-sm text-slate-500">Avg Buy</p>
-                <p>£{position.averageBuyPrice.toLocaleString("en-GB")}</p>
-              </div>
+                <label>
+                  <p className="text-sm text-slate-500">Avg Buy</p>
+                  <input
+                    type="number"
+                    value={position.averageBuyPrice}
+                    onChange={(event) =>
+                      updatePosition(
+                        position.id,
+                        "averageBuyPrice",
+                        event.target.value
+                      )
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                  />
+                </label>
 
-              <div>
-                <p className="text-sm text-slate-500">Current Price</p>
-                <p>£{position.currentPrice.toLocaleString("en-GB")}</p>
+                <label>
+                  <p className="text-sm text-slate-500">Current Price</p>
+                  <input
+                    type="number"
+                    value={position.currentPrice}
+                    onChange={(event) =>
+                      updatePosition(
+                        position.id,
+                        "currentPrice",
+                        event.target.value
+                      )
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                  />
+                </label>
+
+                <label>
+                  <p className="text-sm text-slate-500">Daily %</p>
+                  <input
+                    type="number"
+                    value={position.dailyChangePercent}
+                    onChange={(event) =>
+                      updatePosition(
+                        position.id,
+                        "dailyChangePercent",
+                        event.target.value
+                      )
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                  />
+                </label>
+
+                <div>
+                  <p className="text-sm text-slate-500">Value</p>
+                  <p className="mt-2 font-semibold">
+                    £
+                    {value.toLocaleString("en-GB", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
