@@ -126,6 +126,17 @@ export default function AdminPage() {
         </p>
       </section>
 
+      <section className="mx-auto mb-8 max-w-6xl rounded-3xl border border-yellow-400/20 bg-yellow-400/10 p-6">
+        <h3 className="text-lg font-semibold text-yellow-200">
+          Browser-only admin mode
+        </h3>
+        <p className="mt-2 text-sm text-yellow-100/80">
+          Changes saved here are stored only in this browser on this device. They
+          are useful for testing and managing your own view, but they are not yet
+          written to a database.
+        </p>
+      </section>
+
       <section className="mx-auto mb-8 grid max-w-6xl gap-4 md:grid-cols-3">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Live Admin NAV</p>
