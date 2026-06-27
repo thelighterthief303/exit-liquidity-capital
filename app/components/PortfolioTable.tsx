@@ -39,6 +39,15 @@ export default function PortfolioTable({ positions }: PortfolioTableProps) {
     0
   );
 
+  const totalCost = calculatedPositions.reduce(
+    (total, position) => total + position.costBasis,
+    0
+  );
+
+  const totalProfitLoss = totalValue - totalCost;
+  const totalProfitLossPercent =
+    totalCost === 0 ? 0 : (totalProfitLoss / totalCost) * 100;
+
   const positionsWithAllocations = calculatedPositions.map((position) => ({
     ...position,
     allocation: totalValue === 0 ? 0 : (position.value / totalValue) * 100,
@@ -51,6 +60,48 @@ export default function PortfolioTable({ positions }: PortfolioTableProps) {
         <p className="mt-1 text-sm text-slate-500">
           Holdings, live prices, value, profit/loss and allocation.
         </p>
+      </div>
+
+      <div className="mb-6 grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl bg-white/[0.03] p-4">
+          <p className="text-sm text-slate-500">Total Value</p>
+          <p className="mt-2 text-2xl font-semibold">
+            £
+            {totalValue.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-white/[0.03] p-4">
+          <p className="text-sm text-slate-500">Total Cost</p>
+          <p className="mt-2 text-2xl font-semibold">
+            £
+            {totalCost.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-white/[0.03] p-4">
+          <p className="text-sm text-slate-500">Total P/L</p>
+          <p
+            className={`mt-2 text-2xl font-semibold ${
+              totalProfitLoss < 0 ? "text-red-400" : "text-emerald-400"
+            }`}
+          >
+            £
+            {totalProfitLoss.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{" "}
+            <span className="text-sm">
+              ({totalProfitLossPercent.toFixed(1)}%)
+            </span>
+          </p>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
