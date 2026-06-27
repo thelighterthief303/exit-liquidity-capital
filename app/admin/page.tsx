@@ -8,6 +8,20 @@ import { useState } from "react";
 export default function AdminPage() {
   const [positions, setPositions] = useState(startingPositions);
 
+  const totalValue = positions.reduce(
+    (total, position) => total + position.quantity * position.currentPrice,
+    0
+  );
+
+  const totalCost = positions.reduce(
+    (total, position) => total + position.quantity * position.averageBuyPrice,
+    0
+  );
+
+  const totalProfitLoss = totalValue - totalCost;
+  const totalProfitLossPercent =
+    totalCost === 0 ? 0 : (totalProfitLoss / totalCost) * 100;
+
   function updatePosition(
     id: number,
     field: "quantity" | "averageBuyPrice" | "currentPrice" | "change",
@@ -41,17 +55,58 @@ export default function AdminPage() {
         </p>
       </section>
 
+      <section className="mx-auto mb-8 grid max-w-6xl gap-4 md:grid-cols-3">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+          <p className="text-sm text-slate-500">Live Admin NAV</p>
+          <p className="mt-3 text-3xl font-bold">
+            £
+            {totalValue.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+          <p className="text-sm text-slate-500">Cost Basis</p>
+          <p className="mt-3 text-3xl font-bold">
+            £
+            {totalCost.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+          <p className="text-sm text-slate-500">Unrealised P/L</p>
+          <p
+            className={`mt-3 text-3xl font-bold ${
+              totalProfitLoss >= 0 ? "text-emerald-400" : "text-red-400"
+            }`}
+          >
+            £
+            {totalProfitLoss.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{" "}
+            ({totalProfitLossPercent.toFixed(1)}%)
+          </p>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
         <h3 className="mb-6 text-xl font-semibold">Edit Manual Positions</h3>
 
         <div className="space-y-4">
           {positions.map((position) => {
             const value = position.quantity * position.currentPrice;
+            const allocation = totalValue === 0 ? 0 : (value / totalValue) * 100;
 
             return (
               <div
                 key={position.id}
-                className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-6"
+                className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-7"
               >
                 <div>
                   <p className="text-sm text-slate-500">Asset</p>
@@ -124,6 +179,11 @@ export default function AdminPage() {
                       maximumFractionDigits: 2,
                     })}
                   </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500">Allocation</p>
+                  <p className="mt-2 font-semibold">{allocation.toFixed(1)}%</p>
                 </div>
               </div>
             );
