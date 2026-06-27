@@ -16,8 +16,11 @@ type Position = {
 };
 
 const STORAGE_KEY = "elc-admin-positions";
+const ADMIN_PASSWORD = "elc";
 
 export default function AdminPage() {
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [password, setPassword] = useState("");
   const [positions, setPositions] = useState<Position[]>(startingPositions);
   const [saveMessage, setSaveMessage] = useState("");
 
@@ -42,6 +45,15 @@ export default function AdminPage() {
   const totalProfitLoss = totalValue - totalCost;
   const totalProfitLossPercent =
     totalCost === 0 ? 0 : (totalProfitLoss / totalCost) * 100;
+
+  function unlockAdmin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (password === ADMIN_PASSWORD) {
+      setIsUnlocked(true);
+      setPassword("");
+    }
+  }
 
   function updatePosition(
     id: number,
@@ -110,6 +122,51 @@ export default function AdminPage() {
     setSaveMessage("Saved in this browser.");
   }
 
+  if (!isUnlocked) {
+    return (
+      <main className="min-h-screen bg-[#050816] px-6 py-8 text-white">
+        <Header />
+
+        <section className="mx-auto max-w-md py-24">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+            <p className="text-sm uppercase tracking-[0.35em] text-slate-500">
+              Admin
+            </p>
+
+            <h2 className="mt-3 text-4xl font-bold">Restricted Area</h2>
+
+            <p className="mt-4 text-slate-400">
+              Enter the admin password. Try not to write it on a Post-it.
+            </p>
+
+            <form onSubmit={unlockAdmin} className="mt-8 space-y-4">
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Password"
+                className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none"
+              />
+
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-emerald-300"
+              >
+                Unlock Admin
+              </button>
+            </form>
+
+            <p className="mt-4 text-xs text-slate-600">
+              Temporary password: elc
+            </p>
+          </div>
+        </section>
+
+        <Footer />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#050816] px-6 py-8 text-white">
       <Header />
@@ -131,9 +188,7 @@ export default function AdminPage() {
           Browser-only admin mode
         </h3>
         <p className="mt-2 text-sm text-yellow-100/80">
-          Changes saved here are stored only in this browser on this device. They
-          are useful for testing and managing your own view, but they are not yet
-          written to a database.
+          Changes saved here are stored only in this browser on this device.
         </p>
       </section>
 
