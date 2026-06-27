@@ -17,6 +17,7 @@ type Position = {
 
 export default function AdminPage() {
   const [positions, setPositions] = useState<Position[]>(startingPositions);
+  const [saveMessage, setSaveMessage] = useState("");
 
   const totalValue = positions.reduce(
     (total, position) => total + position.quantity * position.currentPrice,
@@ -43,6 +44,8 @@ export default function AdminPage() {
       | "change",
     value: string
   ) {
+    setSaveMessage("");
+
     setPositions((currentPositions) =>
       currentPositions.map((position) =>
         position.id === id
@@ -57,6 +60,8 @@ export default function AdminPage() {
   }
 
   function addPosition() {
+    setSaveMessage("");
+
     const nextId =
       positions.length === 0
         ? 1
@@ -77,9 +82,21 @@ export default function AdminPage() {
   }
 
   function deletePosition(id: number) {
+    setSaveMessage("");
+
     setPositions((currentPositions) =>
       currentPositions.filter((position) => position.id !== id)
     );
+  }
+
+  function resetPositions() {
+    setPositions(startingPositions);
+    setSaveMessage("Reset to original data.");
+  }
+
+  function savePositions() {
+    console.log("Saved positions:", positions);
+    setSaveMessage("Saved locally. Persistent saving comes next.");
   }
 
   return (
@@ -94,7 +111,7 @@ export default function AdminPage() {
         <h2 className="mt-3 text-5xl font-bold">Portfolio Management</h2>
 
         <p className="mt-4 max-w-2xl text-slate-400">
-          Manual portfolio edits. Changes update on this page only for now.
+          Manual portfolio edits. Saving permanently is the next job.
         </p>
       </section>
 
@@ -139,15 +156,36 @@ export default function AdminPage() {
       </section>
 
       <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <h3 className="text-xl font-semibold">Edit Manual Positions</h3>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-semibold">Edit Manual Positions</h3>
+            {saveMessage && (
+              <p className="mt-1 text-sm text-emerald-400">{saveMessage}</p>
+            )}
+          </div>
 
-          <button
-            onClick={addPosition}
-            className="rounded-xl bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
-          >
-            + Add Position
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={resetPositions}
+              className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10"
+            >
+              Reset
+            </button>
+
+            <button
+              onClick={addPosition}
+              className="rounded-xl border border-emerald-400/30 px-4 py-2 text-sm font-semibold text-emerald-400 transition hover:bg-emerald-400/10"
+            >
+              + Add Position
+            </button>
+
+            <button
+              onClick={savePositions}
+              className="rounded-xl bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
+            >
+              Save
+            </button>
+          </div>
         </div>
 
         <div className="space-y-4">
