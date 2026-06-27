@@ -12,7 +12,7 @@ export async function getLivePricedPositions(
 ): Promise<PricedPosition[]> {
   const coinIds = positions
     .map((position) => assets[position.symbol as keyof typeof assets])
-    .filter(Boolean);
+    .filter((id): id is string => Boolean(id));
 
   const prices = await getPrices(coinIds);
 
