@@ -9,7 +9,6 @@ import PortfolioTable from "./PortfolioTable";
 import RecentTrades from "./RecentTrades";
 import Footer from "./Footer";
 import { positions as fallbackPositions } from "../data/fund";
-import { getPositions } from "../../lib/positions";
 import { getLivePricedPortfolio } from "../../lib/priceService";
 
 type Position = {
@@ -22,6 +21,12 @@ type Position = {
   change: number;
 };
 
+type PositionsApiResponse = {
+  ok: boolean;
+  positions?: Position[];
+  error?: string;
+};
+
 export default function DashboardClient() {
   const [positions, setPositions] = useState<Position[]>(fallbackPositions);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +35,19 @@ export default function DashboardClient() {
   useEffect(() => {
     async function loadPositions() {
       try {
-        const dbPositions = await getPositions();
-        const pricedPortfolio = await getLivePricedPortfolio(dbPositions);
+        const response = await fetch("/api/positions");
+
+        if (!response.ok) {
+          throw new Error("Positions API request failed");
+        }
+
+        const positionsData: PositionsApiResponse = await response.json();
+
+        if (!positionsData.ok || !positionsData.positions) {
+          throw new Error(positionsData.error || "Positions API returned no positions");
+        }
+
+        const pricedPortfolio = await getLivePricedPortfolio(positionsData.positions);
 
         setPositions(
           pricedPortfolio.positions.map((position) => ({
@@ -46,16 +62,16 @@ export default function DashboardClient() {
             pricedPortfolio.updatedAt
           ).toLocaleTimeString("en-GB")}`
         );
-      }catch (error) {
-  console.error("Price service error:", error);
+      } catch (error) {
+        console.error("Dashboard load error:", error);
 
-  const message =
-    error instanceof Error
-      ? error.message
-      : JSON.stringify(error, null, 2);
+        const message =
+          error instanceof Error
+            ? error.message
+            : JSON.stringify(error, null, 2);
 
-  setPriceMessage(`Using saved portfolio prices. ${message}`);
-} finally {
+        setPriceMessage(`Using saved portfolio prices. ${message}`);
+      } finally {
         setIsLoading(false);
       }
     }
