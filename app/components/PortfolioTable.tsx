@@ -46,22 +46,25 @@ export default function PortfolioTable({ positions }: PortfolioTableProps) {
 
   return (
     <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-xl font-semibold">Current Positions</h3>
-        <p className="text-sm text-slate-500">Now with actual maths.</p>
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold">Portfolio Tracker</h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Holdings, live prices, value, profit/loss and allocation.
+        </p>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
+        <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-white/10 text-slate-400">
             <tr>
-              <th className="py-3">Asset</th>
-              <th className="py-3">Quantity</th>
-              <th className="py-3">Avg Buy</th>
-              <th className="py-3">Price</th>
-              <th className="py-3">Value</th>
-              <th className="py-3">Allocation</th>
-              <th className="py-3">P/L</th>
+              <th className="py-3">Holding</th>
+              <th className="py-3 text-right">Quantity</th>
+              <th className="py-3 text-right">Avg Buy</th>
+              <th className="py-3 text-right">Live Price</th>
+              <th className="py-3 text-right">Value</th>
+              <th className="py-3 text-right">P/L</th>
+              <th className="py-3 text-right">24h</th>
+              <th className="py-3 text-right">Allocation</th>
             </tr>
           </thead>
 
@@ -73,26 +76,27 @@ export default function PortfolioTable({ positions }: PortfolioTableProps) {
                   <p className="text-xs text-slate-500">{position.symbol}</p>
                 </td>
 
-                <td className="py-4">{position.quantity}</td>
+                <td className="py-4 text-right">{position.quantity}</td>
 
-                <td className="py-4">
+                <td className="py-4 text-right">
                   £{position.averageBuyPrice.toLocaleString("en-GB")}
                 </td>
 
-                <td className="py-4">
-                  £{position.currentPrice.toLocaleString("en-GB")}
+                <td className="py-4 text-right">
+                  £{position.currentPrice.toLocaleString("en-GB", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 6,
+                  })}
                 </td>
 
-                <td className="py-4">
+                <td className="py-4 text-right">
                   £{position.value.toLocaleString("en-GB", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </td>
 
-                <td className="py-4">{position.allocation.toFixed(1)}%</td>
-
-                <td className="py-4">
+                <td className="py-4 text-right">
                   <span
                     className={
                       position.profitLoss < 0
@@ -103,9 +107,33 @@ export default function PortfolioTable({ positions }: PortfolioTableProps) {
                     £{position.profitLoss.toLocaleString("en-GB", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
-                    })}{" "}
-                    ({position.profitLossPercent.toFixed(1)}%)
+                    })}
+                    <span className="ml-1 text-xs">
+                      ({position.profitLossPercent.toFixed(1)}%)
+                    </span>
                   </span>
+                </td>
+
+                <td className="py-4 text-right">
+                  <span
+                    className={
+                      position.change < 0
+                        ? "text-red-400"
+                        : position.change > 0
+                        ? "text-emerald-400"
+                        : "text-slate-500"
+                    }
+                  >
+                    {position.change === 0
+                      ? "—"
+                      : `${position.change > 0 ? "+" : ""}${position.change.toFixed(
+                          2
+                        )}%`}
+                  </span>
+                </td>
+
+                <td className="py-4 text-right">
+                  {position.allocation.toFixed(1)}%
                 </td>
               </tr>
             ))}
