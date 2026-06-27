@@ -57,6 +57,7 @@ export default function Header() {
         <Link href="/trades" className="transition-colors hover:text-white">Trades</Link>
         <Link href="/journal" className="transition-colors hover:text-white">Journal</Link>
         <Link href="/about" className="transition-colors hover:text-white">About</Link>
+        <Link href="/admin" className="transition-colors hover:text-white">Admin</Link>
       </div>
     </nav>
   );
