@@ -10,7 +10,7 @@ export default function AdminPage() {
 
   function updatePosition(
     id: number,
-    field: "quantity" | "averageBuyPrice" | "currentPrice" | "dailyChangePercent",
+    field: "quantity" | "averageBuyPrice" | "currentPrice" | "change",
     value: string
   ) {
     setPositions((currentPositions) =>
@@ -107,13 +107,9 @@ export default function AdminPage() {
                   <p className="text-sm text-slate-500">Daily %</p>
                   <input
                     type="number"
-                    value={position.dailyChangePercent}
+                    value={position.change}
                     onChange={(event) =>
-                      updatePosition(
-                        position.id,
-                        "dailyChangePercent",
-                        event.target.value
-                      )
+                      updatePosition(position.id, "change", event.target.value)
                     }
                     className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
                   />
