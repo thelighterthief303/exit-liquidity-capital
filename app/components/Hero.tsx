@@ -1,19 +1,39 @@
-import {
-  fund,
-  portfolioWithAllocations,
-} from "../data/fund";
 import AnimatedValue from "./AnimatedValue";
 import StatusCard from "./StatusCard";
 
-const bestPerformer = portfolioWithAllocations.reduce((best, position) =>
-  position.change > best.change ? position : best
-);
+type Position = {
+  id: number;
+  asset: string;
+  symbol: string;
+  quantity: number;
+  averageBuyPrice: number;
+  currentPrice: number;
+  change: number;
+};
 
-const worstPerformer = portfolioWithAllocations.reduce((worst, position) =>
-  position.change < worst.change ? position : worst
-);
+type HeroProps = {
+  positions: Position[];
+};
 
-export default function Hero() {
+export default function Hero({ positions }: HeroProps) {
+  const calculatedPositions = positions.map((position) => ({
+    ...position,
+    value: position.quantity * position.currentPrice,
+  }));
+
+  const nav = calculatedPositions.reduce(
+    (total, position) => total + position.value,
+    0
+  );
+
+  const bestPerformer = calculatedPositions.reduce((best, position) =>
+    position.change > best.change ? position : best
+  );
+
+  const worstPerformer = calculatedPositions.reduce((worst, position) =>
+    position.change < worst.change ? position : worst
+  );
+
   return (
     <section className="mx-auto max-w-6xl py-14">
       <div className="mb-8">
@@ -22,19 +42,17 @@ export default function Hero() {
         </p>
 
         <h2 className="mt-3 text-6xl font-bold tracking-tight">
-          <AnimatedValue value={fund.nav} />
+          <AnimatedValue value={nav} />
         </h2>
 
-        <p className="mt-4 text-xl text-slate-400">
-          Total Net Asset Value
-        </p>
+        <p className="mt-4 text-xl text-slate-400">Total Net Asset Value</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-4">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Today's Damage</p>
           <p className="mt-3 text-3xl font-bold text-emerald-400">
-            +£{fund.dailyChange.toLocaleString("en-GB")}
+            Manual
           </p>
         </div>
 
