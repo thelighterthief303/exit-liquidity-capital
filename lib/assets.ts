@@ -4,4 +4,6 @@ export const assets = {
   SOL: "solana",
   SUI: "sui",
   HYPE: "hyperliquid",
-};
+  NOCK: "nockchain",
+  PRL: "pearl-2",
+} as const;

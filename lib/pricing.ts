@@ -10,9 +10,9 @@ export type PricedPosition = DbPosition & {
 export async function getLivePricedPositions(
   positions: DbPosition[]
 ): Promise<PricedPosition[]> {
-  const coinIds = positions
+  const coinIds: string[] = positions
     .map((position) => assets[position.symbol as keyof typeof assets])
-    .filter((id): id is string => Boolean(id));
+    .filter((id): id is NonNullable<typeof id> => id !== undefined);
 
   const prices = await getPrices(coinIds);
 
