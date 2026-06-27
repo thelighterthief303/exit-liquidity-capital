@@ -50,7 +50,9 @@ export async function getPositions() {
     .select("*")
     .order("id");
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return data.map(fromSupabasePosition);
 }
@@ -60,5 +62,7 @@ export async function savePositions(positions: DbPosition[]) {
     .from("positions")
     .upsert(positions.map(toSupabasePosition), { onConflict: "id" });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 }

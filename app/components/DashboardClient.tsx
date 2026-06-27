@@ -10,10 +10,7 @@ import RecentTrades from "./RecentTrades";
 import Footer from "./Footer";
 import { positions as fallbackPositions } from "../data/fund";
 import { getPositions } from "../../lib/positions";
-import {
-  getLivePricedPositions,
-  type PricedPosition,
-} from "../../lib/priceService";
+import { getLivePricedPortfolio } from "../../lib/priceService";
 
 type Position = {
   id: number;
@@ -34,18 +31,21 @@ export default function DashboardClient() {
     async function loadPositions() {
       try {
         const dbPositions = await getPositions();
-        const pricedPositions: PricedPosition[] =
-          await getLivePricedPositions(dbPositions);
+        const pricedPortfolio = await getLivePricedPortfolio(dbPositions);
 
         setPositions(
-          pricedPositions.map((position) => ({
+          pricedPortfolio.positions.map((position) => ({
             ...position,
             currentPrice: position.livePrice,
             change: position.liveChange24h,
           }))
         );
 
-        setPriceMessage("Live prices from internal price service");
+        setPriceMessage(
+          `Live prices from ${pricedPortfolio.source} · Updated ${new Date(
+            pricedPortfolio.updatedAt
+          ).toLocaleTimeString("en-GB")}`
+        );
       } catch (error) {
         console.error("Price service error:", error);
         setPriceMessage(`Using saved portfolio prices: ${String(error)}`);

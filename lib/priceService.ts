@@ -20,9 +20,15 @@ export type PricedPosition = DbPosition & {
   liveChange24h: number;
 };
 
-export async function getLivePricedPositions(
+export type PricedPortfolio = {
+  positions: PricedPosition[];
+  source: string;
+  updatedAt: string;
+};
+
+export async function getLivePricedPortfolio(
   positions: DbPosition[]
-): Promise<PricedPosition[]> {
+): Promise<PricedPortfolio> {
   const response = await fetch("/api/prices");
 
   if (!response.ok) {
@@ -35,14 +41,18 @@ export async function getLivePricedPositions(
     throw new Error(data.error || "Price API returned no prices");
   }
 
-  return positions.map((position) => {
-    const coinId = assets[position.symbol as keyof typeof assets];
-    const liveData = coinId ? data.prices?.[coinId] : null;
+  return {
+    source: data.source || "Unknown",
+    updatedAt: data.updatedAt || new Date().toISOString(),
+    positions: positions.map((position) => {
+      const coinId = assets[position.symbol as keyof typeof assets];
+      const liveData = coinId ? data.prices?.[coinId] : null;
 
-    return {
-      ...position,
-      livePrice: liveData?.gbp ?? position.currentPrice,
-      liveChange24h: liveData?.gbp_24h_change ?? position.change,
-    };
-  });
+      return {
+        ...position,
+        livePrice: liveData?.gbp ?? position.currentPrice,
+        liveChange24h: liveData?.gbp_24h_change ?? position.change,
+      };
+    }),
+  };
 }
