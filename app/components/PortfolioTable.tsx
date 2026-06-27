@@ -1,6 +1,49 @@
-import { portfolioWithAllocations } from "../data/fund";
+import {
+  portfolioWithAllocations as defaultPositions,
+} from "../data/fund";
 
-export default function PortfolioTable() {
+type Position = {
+  id: number;
+  asset: string;
+  symbol: string;
+  quantity: number;
+  averageBuyPrice: number;
+  currentPrice: number;
+  change: number;
+};
+
+type PortfolioTableProps = {
+  positions?: Position[];
+};
+
+export default function PortfolioTable({ positions }: PortfolioTableProps) {
+  const calculatedPositions = positions
+    ? positions.map((position) => {
+        const value = position.quantity * position.currentPrice;
+        const costBasis = position.quantity * position.averageBuyPrice;
+        const profitLoss = value - costBasis;
+
+        return {
+          ...position,
+          value,
+          costBasis,
+          profitLoss,
+          profitLossPercent:
+            costBasis === 0 ? 0 : (profitLoss / costBasis) * 100,
+        };
+      })
+    : defaultPositions;
+
+  const totalValue = calculatedPositions.reduce(
+    (total, position) => total + position.value,
+    0
+  );
+
+  const positionsWithAllocations = calculatedPositions.map((position) => ({
+    ...position,
+    allocation: totalValue === 0 ? 0 : (position.value / totalValue) * 100,
+  }));
+
   return (
     <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-6 flex items-center justify-between">
@@ -23,7 +66,7 @@ export default function PortfolioTable() {
           </thead>
 
           <tbody>
-            {portfolioWithAllocations.map((position) => (
+            {positionsWithAllocations.map((position) => (
               <tr key={position.symbol} className="border-b border-white/5">
                 <td className="py-4">
                   <p className="font-medium">{position.asset}</p>

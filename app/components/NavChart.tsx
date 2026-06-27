@@ -1,8 +1,36 @@
-import { navHistory } from "../data/fund";
+import { navHistory as defaultNavHistory } from "../data/fund";
 
-const maxValue = Math.max(...navHistory.map((item) => item.value));
+type Position = {
+  id: number;
+  asset: string;
+  symbol: string;
+  quantity: number;
+  averageBuyPrice: number;
+  currentPrice: number;
+  change: number;
+};
 
-export default function NavChart() {
+type NavChartProps = {
+  positions?: Position[];
+};
+
+export default function NavChart({ positions }: NavChartProps) {
+  const currentValue = positions
+    ? positions.reduce(
+        (total, position) => total + position.quantity * position.currentPrice,
+        0
+      )
+    : defaultNavHistory[defaultNavHistory.length - 1].value;
+
+  const navHistory = positions
+    ? [
+        ...defaultNavHistory.slice(0, -1),
+        { label: "Now", value: currentValue },
+      ]
+    : defaultNavHistory;
+
+  const maxValue = Math.max(...navHistory.map((item) => item.value));
+
   return (
     <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-8 flex items-center justify-between">
