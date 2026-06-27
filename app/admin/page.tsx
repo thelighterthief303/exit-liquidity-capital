@@ -18,6 +18,22 @@ type Position = {
 const STORAGE_KEY = "elc-admin-positions";
 const ADMIN_PASSWORD = "elc";
 
+function isValidPosition(item: unknown): item is Position {
+  if (typeof item !== "object" || item === null) return false;
+
+  const position = item as Position;
+
+  return (
+    typeof position.id === "number" &&
+    typeof position.asset === "string" &&
+    typeof position.symbol === "string" &&
+    typeof position.quantity === "number" &&
+    typeof position.averageBuyPrice === "number" &&
+    typeof position.currentPrice === "number" &&
+    typeof position.change === "number"
+  );
+}
+
 export default function AdminPage() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [password, setPassword] = useState("");
@@ -29,7 +45,11 @@ export default function AdminPage() {
     const savedPositions = localStorage.getItem(STORAGE_KEY);
 
     if (savedPositions) {
-      setPositions(JSON.parse(savedPositions));
+      const parsed = JSON.parse(savedPositions);
+
+      if (Array.isArray(parsed) && parsed.every(isValidPosition)) {
+        setPositions(parsed);
+      }
     }
   }, []);
 
@@ -136,6 +156,11 @@ export default function AdminPage() {
 
       if (!Array.isArray(parsed)) {
         setSaveMessage("Import failed: JSON must be an array.");
+        return;
+      }
+
+      if (!parsed.every(isValidPosition)) {
+        setSaveMessage("Import failed: invalid portfolio format.");
         return;
       }
 
