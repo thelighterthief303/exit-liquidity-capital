@@ -10,7 +10,10 @@ import RecentTrades from "./RecentTrades";
 import Footer from "./Footer";
 import { positions as fallbackPositions } from "../data/fund";
 import { getPositions } from "../../lib/positions";
-import { getLivePricedPositions, type PricedPosition } from "../../lib/pricing";
+import {
+  getLivePricedPositions,
+  type PricedPosition,
+} from "../../lib/priceService";
 
 type Position = {
   id: number;
@@ -34,17 +37,18 @@ export default function DashboardClient() {
         const pricedPositions: PricedPosition[] =
           await getLivePricedPositions(dbPositions);
 
-        const dashboardPositions = pricedPositions.map((position) => ({
-          ...position,
-          currentPrice: position.livePrice,
-          change: position.liveChange24h,
-        }));
+        setPositions(
+          pricedPositions.map((position) => ({
+            ...position,
+            currentPrice: position.livePrice,
+            change: position.liveChange24h,
+          }))
+        );
 
-        setPositions(dashboardPositions);
-        setPriceMessage("Live prices from CoinGecko");
-      } catch {
-        console.error("Could not load live positions.");
-        setPriceMessage("Using saved portfolio prices");
+        setPriceMessage("Live prices from internal price service");
+      } catch (error) {
+        console.error("Price service error:", error);
+        setPriceMessage(`Using saved portfolio prices: ${String(error)}`);
       } finally {
         setIsLoading(false);
       }
