@@ -8,7 +8,9 @@ import AllocationBars from "./AllocationBars";
 import PortfolioTable from "./PortfolioTable";
 import RecentTrades from "./RecentTrades";
 import Footer from "./Footer";
-import { positions as startingPositions } from "../data/fund";
+import { positions as fallbackPositions } from "../data/fund";
+import { getPositions } from "../../lib/positions";
+import { getLivePricedPositions, type PricedPosition } from "../../lib/pricing";
 
 type Position = {
   id: number;
@@ -20,22 +22,47 @@ type Position = {
   change: number;
 };
 
-const STORAGE_KEY = "elc-admin-positions";
-
 export default function DashboardClient() {
-  const [positions, setPositions] = useState<Position[]>(startingPositions);
+  const [positions, setPositions] = useState<Position[]>(fallbackPositions);
+  const [isLoading, setIsLoading] = useState(true);
+  const [priceMessage, setPriceMessage] = useState("");
 
   useEffect(() => {
-    const savedPositions = localStorage.getItem(STORAGE_KEY);
+    async function loadPositions() {
+      try {
+        const dbPositions = await getPositions();
+        const pricedPositions: PricedPosition[] =
+          await getLivePricedPositions(dbPositions);
 
-    if (savedPositions) {
-      setPositions(JSON.parse(savedPositions));
+        const dashboardPositions = pricedPositions.map((position) => ({
+          ...position,
+          currentPrice: position.livePrice,
+          change: position.liveChange24h,
+        }));
+
+        setPositions(dashboardPositions);
+        setPriceMessage("Live prices from CoinGecko");
+      } catch {
+        console.error("Could not load live positions.");
+        setPriceMessage("Using saved portfolio prices");
+      } finally {
+        setIsLoading(false);
+      }
     }
+
+    loadPositions();
   }, []);
 
   return (
     <main className="min-h-screen bg-[#050816] px-6 py-8 text-white">
       <Header />
+
+      {(isLoading || priceMessage) && (
+        <section className="mx-auto max-w-6xl pt-8 text-sm text-slate-500">
+          {isLoading ? "Loading portfolio data..." : priceMessage}
+        </section>
+      )}
+
       <Hero positions={positions} />
       <NavChart positions={positions} />
       <AllocationBars positions={positions} />

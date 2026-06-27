@@ -45,14 +45,19 @@ export default function Hero({ positions }: HeroProps) {
           <AnimatedValue value={nav} />
         </h2>
 
-        <p className="mt-4 text-xl text-slate-400">Total Net Asset Value</p>
+        <p className="mt-4 text-xl text-slate-400">
+          Total Net Asset Value
+        </p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-4">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          <p className="text-sm text-slate-500">Today's Damage</p>
+          <p className="text-sm text-slate-500">Price Source</p>
           <p className="mt-3 text-3xl font-bold text-emerald-400">
-            Manual
+            Live
+          </p>
+          <p className="mt-2 text-xs text-slate-500">
+            CoinGecko where available
           </p>
         </div>
 
