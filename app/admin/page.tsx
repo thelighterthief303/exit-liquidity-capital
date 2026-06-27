@@ -3,7 +3,7 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { positions as startingPositions } from "../data/fund";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Position = {
   id: number;
@@ -15,9 +15,19 @@ type Position = {
   change: number;
 };
 
+const STORAGE_KEY = "elc-admin-positions";
+
 export default function AdminPage() {
   const [positions, setPositions] = useState<Position[]>(startingPositions);
   const [saveMessage, setSaveMessage] = useState("");
+
+  useEffect(() => {
+    const savedPositions = localStorage.getItem(STORAGE_KEY);
+
+    if (savedPositions) {
+      setPositions(JSON.parse(savedPositions));
+    }
+  }, []);
 
   const totalValue = positions.reduce(
     (total, position) => total + position.quantity * position.currentPrice,
@@ -91,12 +101,13 @@ export default function AdminPage() {
 
   function resetPositions() {
     setPositions(startingPositions);
+    localStorage.removeItem(STORAGE_KEY);
     setSaveMessage("Reset to original data.");
   }
 
   function savePositions() {
-    console.log("Saved positions:", positions);
-    setSaveMessage("Saved locally. Persistent saving comes next.");
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+    setSaveMessage("Saved in this browser.");
   }
 
   return (
@@ -111,7 +122,7 @@ export default function AdminPage() {
         <h2 className="mt-3 text-5xl font-bold">Portfolio Management</h2>
 
         <p className="mt-4 max-w-2xl text-slate-400">
-          Manual portfolio edits. Saving permanently is the next job.
+          Manual portfolio edits. Currently saved in this browser only.
         </p>
       </section>
 
