@@ -16,6 +16,7 @@ type Position = {
 };
 
 const STORAGE_KEY = "elc-admin-positions";
+const LAST_SAVED_KEY = "elc-admin-last-saved";
 const ADMIN_PASSWORD = "elc";
 
 function isValidPosition(item: unknown): item is Position {
@@ -40,9 +41,11 @@ export default function AdminPage() {
   const [positions, setPositions] = useState<Position[]>(startingPositions);
   const [saveMessage, setSaveMessage] = useState("");
   const [importText, setImportText] = useState("");
+  const [lastSaved, setLastSaved] = useState("");
 
   useEffect(() => {
     const savedPositions = localStorage.getItem(STORAGE_KEY);
+    const savedTimestamp = localStorage.getItem(LAST_SAVED_KEY);
 
     if (savedPositions) {
       const parsed = JSON.parse(savedPositions);
@@ -50,6 +53,10 @@ export default function AdminPage() {
       if (Array.isArray(parsed) && parsed.every(isValidPosition)) {
         setPositions(parsed);
       }
+    }
+
+    if (savedTimestamp) {
+      setLastSaved(savedTimestamp);
     }
   }, []);
 
@@ -135,11 +142,20 @@ export default function AdminPage() {
   function resetPositions() {
     setPositions(startingPositions);
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(LAST_SAVED_KEY);
+    setLastSaved("");
     setSaveMessage("Reset to original data.");
   }
 
   function savePositions() {
+    const timestamp = new Date().toLocaleString("en-GB", {
+      dateStyle: "medium",
+      timeStyle: "medium",
+    });
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+    localStorage.setItem(LAST_SAVED_KEY, timestamp);
+    setLastSaved(timestamp);
     setSaveMessage("Saved in this browser.");
   }
 
@@ -164,8 +180,15 @@ export default function AdminPage() {
         return;
       }
 
+      const timestamp = new Date().toLocaleString("en-GB", {
+        dateStyle: "medium",
+        timeStyle: "medium",
+      });
+
       setPositions(parsed);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      localStorage.setItem(LAST_SAVED_KEY, timestamp);
+      setLastSaved(timestamp);
       setSaveMessage("Imported and saved in this browser.");
     } catch {
       setSaveMessage("Import failed: invalid JSON.");
@@ -230,6 +253,10 @@ export default function AdminPage() {
 
         <p className="mt-4 max-w-2xl text-slate-400">
           Manual portfolio edits. Currently saved in this browser only.
+        </p>
+
+        <p className="mt-4 text-sm text-slate-500">
+          Last saved: {lastSaved || "Not saved yet"}
         </p>
       </section>
 
