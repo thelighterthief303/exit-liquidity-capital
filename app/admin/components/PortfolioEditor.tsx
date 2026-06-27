@@ -72,6 +72,7 @@ export default function PortfolioEditor({
 
   function deletePosition(id: number) {
     setSaveMessage("");
+
     setPositions((currentPositions) =>
       currentPositions.filter((position) => position.id !== id)
     );
@@ -81,9 +82,12 @@ export default function PortfolioEditor({
     <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h3 className="text-xl font-semibold">Edit Manual Positions</h3>
+          <h3 className="text-xl font-semibold">Edit Holdings</h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Quantity and average buy are manual. Current price is used as fallback if live pricing is unavailable.
+          </p>
           {saveMessage && (
-            <p className="mt-1 text-sm text-emerald-400">{saveMessage}</p>
+            <p className="mt-2 text-sm text-emerald-400">{saveMessage}</p>
           )}
         </div>
 
@@ -99,7 +103,7 @@ export default function PortfolioEditor({
             onClick={addPosition}
             className="rounded-xl border border-emerald-400/30 px-4 py-2 text-sm font-semibold text-emerald-400 transition hover:bg-emerald-400/10"
           >
-            + Add Position
+            + Add Holding
           </button>
 
           <button
@@ -111,122 +115,133 @@ export default function PortfolioEditor({
         </div>
       </div>
 
-      <div className="space-y-4">
-        {positions.map((position) => {
-          const value = position.quantity * position.currentPrice;
-          const allocation = totalValue === 0 ? 0 : (value / totalValue) * 100;
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[1000px] text-left text-sm">
+          <thead className="border-b border-white/10 text-slate-400">
+            <tr>
+              <th className="py-3">Asset</th>
+              <th className="py-3">Symbol</th>
+              <th className="py-3 text-right">Quantity</th>
+              <th className="py-3 text-right">Avg Buy</th>
+              <th className="py-3 text-right">Fallback Price</th>
+              <th className="py-3 text-right">Fallback 24h %</th>
+              <th className="py-3 text-right">Value</th>
+              <th className="py-3 text-right">Allocation</th>
+              <th className="py-3 text-right">Action</th>
+            </tr>
+          </thead>
 
-          return (
-            <div
-              key={position.id}
-              className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-8"
-            >
-              <label>
-                <p className="text-sm text-slate-500">Asset</p>
-                <input
-                  value={position.asset}
-                  onChange={(event) =>
-                    updatePosition(position.id, "asset", event.target.value)
-                  }
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-                />
-              </label>
+          <tbody>
+            {positions.map((position) => {
+              const value = position.quantity * position.currentPrice;
+              const allocation =
+                totalValue === 0 ? 0 : (value / totalValue) * 100;
 
-              <label>
-                <p className="text-sm text-slate-500">Symbol</p>
-                <input
-                  value={position.symbol}
-                  onChange={(event) =>
-                    updatePosition(
-                      position.id,
-                      "symbol",
-                      event.target.value.toUpperCase()
-                    )
-                  }
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-                />
-              </label>
+              return (
+                <tr key={position.id} className="border-b border-white/5">
+                  <td className="py-3 pr-3">
+                    <input
+                      value={position.asset}
+                      onChange={(event) =>
+                        updatePosition(position.id, "asset", event.target.value)
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                    />
+                  </td>
 
-              <label>
-                <p className="text-sm text-slate-500">Quantity</p>
-                <input
-                  type="number"
-                  value={position.quantity}
-                  onChange={(event) =>
-                    updatePosition(position.id, "quantity", event.target.value)
-                  }
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-                />
-              </label>
+                  <td className="py-3 pr-3">
+                    <input
+                      value={position.symbol}
+                      onChange={(event) =>
+                        updatePosition(
+                          position.id,
+                          "symbol",
+                          event.target.value.toUpperCase()
+                        )
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                    />
+                  </td>
 
-              <label>
-                <p className="text-sm text-slate-500">Avg Buy</p>
-                <input
-                  type="number"
-                  value={position.averageBuyPrice}
-                  onChange={(event) =>
-                    updatePosition(
-                      position.id,
-                      "averageBuyPrice",
-                      event.target.value
-                    )
-                  }
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-                />
-              </label>
+                  <td className="py-3 pr-3">
+                    <input
+                      type="number"
+                      value={position.quantity}
+                      onChange={(event) =>
+                        updatePosition(
+                          position.id,
+                          "quantity",
+                          event.target.value
+                        )
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-right text-white outline-none"
+                    />
+                  </td>
 
-              <label>
-                <p className="text-sm text-slate-500">Current</p>
-                <input
-                  type="number"
-                  value={position.currentPrice}
-                  onChange={(event) =>
-                    updatePosition(
-                      position.id,
-                      "currentPrice",
-                      event.target.value
-                    )
-                  }
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-                />
-              </label>
+                  <td className="py-3 pr-3">
+                    <input
+                      type="number"
+                      value={position.averageBuyPrice}
+                      onChange={(event) =>
+                        updatePosition(
+                          position.id,
+                          "averageBuyPrice",
+                          event.target.value
+                        )
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-right text-white outline-none"
+                    />
+                  </td>
 
-              <label>
-                <p className="text-sm text-slate-500">Daily %</p>
-                <input
-                  type="number"
-                  value={position.change}
-                  onChange={(event) =>
-                    updatePosition(position.id, "change", event.target.value)
-                  }
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-                />
-              </label>
+                  <td className="py-3 pr-3">
+                    <input
+                      type="number"
+                      value={position.currentPrice}
+                      onChange={(event) =>
+                        updatePosition(
+                          position.id,
+                          "currentPrice",
+                          event.target.value
+                        )
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-right text-white outline-none"
+                    />
+                  </td>
 
-              <div>
-                <p className="text-sm text-slate-500">Value</p>
-                <p className="mt-2 font-semibold">
-                  £{value.toLocaleString("en-GB", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {allocation.toFixed(1)}%
-                </p>
-              </div>
+                  <td className="py-3 pr-3">
+                    <input
+                      type="number"
+                      value={position.change}
+                      onChange={(event) =>
+                        updatePosition(position.id, "change", event.target.value)
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-right text-white outline-none"
+                    />
+                  </td>
 
-              <div className="flex items-end">
-                <button
-                  onClick={() => deletePosition(position.id)}
-                  className="rounded-xl border border-red-400/30 px-3 py-2 text-sm text-red-400 transition hover:bg-red-400/10"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          );
-        })}
+                  <td className="py-3 text-right">
+                    £
+                    {value.toLocaleString("en-GB", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+
+                  <td className="py-3 text-right">{allocation.toFixed(1)}%</td>
+
+                  <td className="py-3 text-right">
+                    <button
+                      onClick={() => deletePosition(position.id)}
+                      className="rounded-xl border border-red-400/30 px-3 py-2 text-sm text-red-400 transition hover:bg-red-400/10"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </section>
   );
