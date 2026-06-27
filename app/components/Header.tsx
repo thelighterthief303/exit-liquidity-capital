@@ -52,12 +52,21 @@ export default function Header() {
       </Link>
 
       <div className="hidden gap-6 text-sm text-slate-300 md:flex">
-        <Link href="/" className="transition-colors hover:text-white">Dashboard</Link>
-        <Link href="/portfolio" className="transition-colors hover:text-white">Portfolio</Link>
-        <Link href="/trades" className="transition-colors hover:text-white">Trades</Link>
-        <Link href="/journal" className="transition-colors hover:text-white">Journal</Link>
-        <Link href="/about" className="transition-colors hover:text-white">About</Link>
-        <Link href="/admin" className="transition-colors hover:text-white">Admin</Link>
+        <Link href="/" className="transition-colors hover:text-white">
+          Dashboard
+        </Link>
+        <Link href="/portfolio" className="transition-colors hover:text-white">
+          Portfolio
+        </Link>
+        <Link href="/trades" className="transition-colors hover:text-white">
+          Trades
+        </Link>
+        <Link href="/journal" className="transition-colors hover:text-white">
+          Journal
+        </Link>
+        <Link href="/about" className="transition-colors hover:text-white">
+          About
+        </Link>
       </div>
     </nav>
   );
