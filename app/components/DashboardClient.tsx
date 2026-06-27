@@ -46,10 +46,16 @@ export default function DashboardClient() {
             pricedPortfolio.updatedAt
           ).toLocaleTimeString("en-GB")}`
         );
-      } catch (error) {
-        console.error("Price service error:", error);
-        setPriceMessage(`Using saved portfolio prices: ${String(error)}`);
-      } finally {
+      }catch (error) {
+  console.error("Price service error:", error);
+
+  const message =
+    error instanceof Error
+      ? error.message
+      : JSON.stringify(error, null, 2);
+
+  setPriceMessage(`Using saved portfolio prices. ${message}`);
+} finally {
         setIsLoading(false);
       }
     }
