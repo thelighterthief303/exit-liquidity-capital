@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [positions, setPositions] = useState<Position[]>(startingPositions);
   const [saveMessage, setSaveMessage] = useState("");
+  const [importText, setImportText] = useState("");
 
   useEffect(() => {
     const savedPositions = localStorage.getItem(STORAGE_KEY);
@@ -122,6 +123,30 @@ export default function AdminPage() {
     setSaveMessage("Saved in this browser.");
   }
 
+  function exportPortfolio() {
+    const json = JSON.stringify(positions, null, 2);
+    navigator.clipboard.writeText(json);
+    setImportText(json);
+    setSaveMessage("Portfolio JSON copied to clipboard.");
+  }
+
+  function importPortfolio() {
+    try {
+      const parsed = JSON.parse(importText);
+
+      if (!Array.isArray(parsed)) {
+        setSaveMessage("Import failed: JSON must be an array.");
+        return;
+      }
+
+      setPositions(parsed);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      setSaveMessage("Imported and saved in this browser.");
+    } catch {
+      setSaveMessage("Import failed: invalid JSON.");
+    }
+  }
+
   if (!isUnlocked) {
     return (
       <main className="min-h-screen bg-[#050816] px-6 py-8 text-white">
@@ -183,15 +208,6 @@ export default function AdminPage() {
         </p>
       </section>
 
-      <section className="mx-auto mb-8 max-w-6xl rounded-3xl border border-yellow-400/20 bg-yellow-400/10 p-6">
-        <h3 className="text-lg font-semibold text-yellow-200">
-          Browser-only admin mode
-        </h3>
-        <p className="mt-2 text-sm text-yellow-100/80">
-          Changes saved here are stored only in this browser on this device.
-        </p>
-      </section>
-
       <section className="mx-auto mb-8 grid max-w-6xl gap-4 md:grid-cols-3">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <p className="text-sm text-slate-500">Live Admin NAV</p>
@@ -230,6 +246,40 @@ export default function AdminPage() {
             ({totalProfitLossPercent.toFixed(1)}%)
           </p>
         </div>
+      </section>
+
+      <section className="mx-auto mb-8 max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-semibold">Backup / Import</h3>
+            <p className="mt-1 text-sm text-slate-500">
+              Copy portfolio data between browsers or keep a backup.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={exportPortfolio}
+              className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10"
+            >
+              Export JSON
+            </button>
+
+            <button
+              onClick={importPortfolio}
+              className="rounded-xl border border-emerald-400/30 px-4 py-2 text-sm font-semibold text-emerald-400 transition hover:bg-emerald-400/10"
+            >
+              Import JSON
+            </button>
+          </div>
+        </div>
+
+        <textarea
+          value={importText}
+          onChange={(event) => setImportText(event.target.value)}
+          placeholder="Paste exported portfolio JSON here..."
+          className="min-h-36 w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-slate-200 outline-none"
+        />
       </section>
 
       <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
