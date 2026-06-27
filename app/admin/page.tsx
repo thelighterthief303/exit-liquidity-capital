@@ -5,8 +5,18 @@ import Footer from "../components/Footer";
 import { positions as startingPositions } from "../data/fund";
 import { useState } from "react";
 
+type Position = {
+  id: number;
+  asset: string;
+  symbol: string;
+  quantity: number;
+  averageBuyPrice: number;
+  currentPrice: number;
+  change: number;
+};
+
 export default function AdminPage() {
-  const [positions, setPositions] = useState(startingPositions);
+  const [positions, setPositions] = useState<Position[]>(startingPositions);
 
   const totalValue = positions.reduce(
     (total, position) => total + position.quantity * position.currentPrice,
@@ -24,7 +34,13 @@ export default function AdminPage() {
 
   function updatePosition(
     id: number,
-    field: "quantity" | "averageBuyPrice" | "currentPrice" | "change",
+    field:
+      | "asset"
+      | "symbol"
+      | "quantity"
+      | "averageBuyPrice"
+      | "currentPrice"
+      | "change",
     value: string
   ) {
     setPositions((currentPositions) =>
@@ -32,10 +48,37 @@ export default function AdminPage() {
         position.id === id
           ? {
               ...position,
-              [field]: Number(value),
+              [field]:
+                field === "asset" || field === "symbol" ? value : Number(value),
             }
           : position
       )
+    );
+  }
+
+  function addPosition() {
+    const nextId =
+      positions.length === 0
+        ? 1
+        : Math.max(...positions.map((position) => position.id)) + 1;
+
+    setPositions((currentPositions) => [
+      ...currentPositions,
+      {
+        id: nextId,
+        asset: "New Asset",
+        symbol: "NEW",
+        quantity: 0,
+        averageBuyPrice: 0,
+        currentPrice: 0,
+        change: 0,
+      },
+    ]);
+  }
+
+  function deletePosition(id: number) {
+    setPositions((currentPositions) =>
+      currentPositions.filter((position) => position.id !== id)
     );
   }
 
@@ -96,7 +139,16 @@ export default function AdminPage() {
       </section>
 
       <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="mb-6 text-xl font-semibold">Edit Manual Positions</h3>
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h3 className="text-xl font-semibold">Edit Manual Positions</h3>
+
+          <button
+            onClick={addPosition}
+            className="rounded-xl bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
+          >
+            + Add Position
+          </button>
+        </div>
 
         <div className="space-y-4">
           {positions.map((position) => {
@@ -106,13 +158,33 @@ export default function AdminPage() {
             return (
               <div
                 key={position.id}
-                className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-7"
+                className="grid gap-4 rounded-2xl bg-white/[0.03] p-4 md:grid-cols-8"
               >
-                <div>
+                <label>
                   <p className="text-sm text-slate-500">Asset</p>
-                  <p>{position.asset}</p>
-                  <p className="text-xs text-slate-500">{position.symbol}</p>
-                </div>
+                  <input
+                    value={position.asset}
+                    onChange={(event) =>
+                      updatePosition(position.id, "asset", event.target.value)
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                  />
+                </label>
+
+                <label>
+                  <p className="text-sm text-slate-500">Symbol</p>
+                  <input
+                    value={position.symbol}
+                    onChange={(event) =>
+                      updatePosition(
+                        position.id,
+                        "symbol",
+                        event.target.value.toUpperCase()
+                      )
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
+                  />
+                </label>
 
                 <label>
                   <p className="text-sm text-slate-500">Quantity</p>
@@ -143,7 +215,7 @@ export default function AdminPage() {
                 </label>
 
                 <label>
-                  <p className="text-sm text-slate-500">Current Price</p>
+                  <p className="text-sm text-slate-500">Current</p>
                   <input
                     type="number"
                     value={position.currentPrice}
@@ -179,11 +251,18 @@ export default function AdminPage() {
                       maximumFractionDigits: 2,
                     })}
                   </p>
+                  <p className="text-xs text-slate-500">
+                    {allocation.toFixed(1)}%
+                  </p>
                 </div>
 
-                <div>
-                  <p className="text-sm text-slate-500">Allocation</p>
-                  <p className="mt-2 font-semibold">{allocation.toFixed(1)}%</p>
+                <div className="flex items-end">
+                  <button
+                    onClick={() => deletePosition(position.id)}
+                    className="rounded-xl border border-red-400/30 px-3 py-2 text-sm text-red-400 transition hover:bg-red-400/10"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             );
